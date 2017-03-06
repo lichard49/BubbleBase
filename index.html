@@ -1,16 +1,66 @@
 <html>
 	<head>
 		<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+		<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
 		<script>
-			function init() {
-				var stage = new createjs.Stage("gameCanvas");
-				var circle = new createjs.Shape();
-				circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 50);
-				circle.x = 100;
-				circle.y = 100;
-				stage.addChild(circle);
-				stage.update();
+		function init() {
+			circle = new createjs.Shape();
+			stage = new createjs.Stage("gameCanvas");
+			stage.canvas.width = window.innerWidth;
+			stage.canvas.height = window.innerHeight;
+			
+			circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 50);
+			circle.x = 100;
+			circle.y = 100;
+			circle.vx = 0;
+			circle.vy = 0;
+			stage.addChild(circle);
+			
+			createjs.Ticker.setFPS(60);
+			createjs.Ticker.addEventListener("tick", tick);
+		}
+
+		function tick() {
+			// update circle
+			circle.y += circle.vy;
+			circle.x += circle.vx;
+			stage.update();
+		}
+
+		document.onkeydown = function (e) {
+			e = e || window.event;
+
+			if (e.keyCode == "38") {
+				// up
+				circle.vy = -10;
+			} else if (e.keyCode == "40") {
+				// down
+				circle.vy = 10;
+			} else if (e.keyCode == "37") {
+				// left
+				circle.vx = -10;
+			} else if (e.keyCode == "39") {
+				// right
+				circle.vx = 10;
 			}
+		}
+		document.onkeyup = function (e) {
+			e = e || window.event;
+
+			if (e.keyCode == "38") {
+				// up
+				circle.vy = 0;
+			} else if (e.keyCode == "40") {
+				// down
+				circle.vy = 0;
+			} else if (e.keyCode == "37") {
+				// left
+				circle.vx = 0;
+			} else if (e.keyCode == "39") {
+				// right
+				circle.vx = 0;
+			}
+		}
 		</script>
 	</head>
 
