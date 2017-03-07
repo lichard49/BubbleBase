@@ -46,7 +46,9 @@
 			var b = circle.y - food.y;
 			var c = Math.sqrt(a*a + b*b);
 			if (c <= circle.radius + food.radius) {
-				console.log("intersect!!!");
+				circle.graphics.clear();
+				circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 100);
+				food.graphics.clear();
 			}
 
 			stage.update();
@@ -55,7 +57,7 @@
 		document.onkeydown = function (e) {
 			e = e || window.event;
 
-			if (e.keyCode == "38") { 		circle.vy = -10;	} // up
+			if (e.keyCode == "38") { 	circle.vy = -10;	} // up
 			else if (e.keyCode == "40") {	circle.vy = 10;		} //down
 			else if (e.keyCode == "37") {	circle.vx = -10;	} // left
 			else if (e.keyCode == "39") {	circle.vx = 10;		} // right
@@ -63,11 +65,10 @@
 		document.onkeyup = function (e) {
 			e = e || window.event;
 
-			if (e.keyCode == "38") {		circle.vy = 0;	} // up
+			if (e.keyCode == "38") {	circle.vy = 0;	} // up
 			else if (e.keyCode == "40") {	circle.vy = 0;	} // down
 			else if (e.keyCode == "37") {	circle.vx = 0;	} // left
 			else if (e.keyCode == "39") {	circle.vx = 0;	} // right
-			}
 		}
 		</script>
 	</head>
