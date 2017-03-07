@@ -9,6 +9,9 @@
 		}
 		</style>
 		<script>
+		food = [];
+		foodTimer = 0;
+
 		function init() {
 			stage = new createjs.Stage("gameCanvas");
 			stage.canvas.width = window.innerWidth;
@@ -17,25 +20,38 @@
 			character = createCircle(100, 100, 20);
 			stage.addChild(character);
 			
-			food = createCircle(900, 100, 10);
-			stage.addChild(food);
-			
-			createjs.Ticker.setFPS(60);
+			createjs.Ticker.setFPS(30);
 			createjs.Ticker.addEventListener("tick", tick);
 		}
 
 		function tick() {
-			// update circle
+			// update character position
 			character.y += character.vy;
 			character.x += character.vx;
 
-			var a = character.x - food.x;
-			var b = character.y - food.y;
-			var c = Math.sqrt(a*a + b*b);
-			if (c <= character.radius + food.radius) {
-				updateCircleRadius(character, character.radius+10);
-				deleteCircle(food);
+			// check for intersection between character and food
+			food.forEach(function(f) {
+				var a = character.x - f.x;
+				var b = character.y - f.y;
+				var c = Math.sqrt(a*a + b*b);
+				if (c <= character.radius + f.radius) {
+					updateCircleRadius(character, character.radius+10);
+					deleteCircle(f);
+					console.log("Eat");
+				}
+			})
+
+			// generate new food
+			if (foodTimer <= 0) {
+				var newFood = createCircle(Math.random()*window.innerWidth, Math.random()*window.innerHeight, 10);
+				stage.addChild(newFood);
+				food.push(newFood);
+
+				// reset food timer
+				foodTimer = Math.random()*200 + Math.random()*100;
+				console.log("next food to appear in " + foodTimer);
 			}
+			foodTimer--;
 
 			stage.update();
 		}
