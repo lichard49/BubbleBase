@@ -3,12 +3,26 @@
 		<title>BubbleBase -- a Firebase demo game</title>
 		<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
 		<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/3.7.0/firebase.js"></script>
+		<script>
+			// Initialize Firebase
+			var config = {
+				apiKey: "AIzaSyBqCKqeT2f73mTsJZoKZ2EORRLWcUSG8dI",
+				authDomain: "bubblebase-f8da5.firebaseapp.com",
+				databaseURL: "https://bubblebase-f8da5.firebaseio.com",
+				storageBucket: "bubblebase-f8da5.appspot.com",
+				messagingSenderId: "654534084811"
+			};
+			firebase.initializeApp(config);
+		</script>
+
 		<style>
 		html, body {
 			overflow: hidden;
 		}
 		</style>
 		<script>
+		db = firebase.database();
 		food = [];
 		foodTimer = 0;
 
@@ -26,8 +40,12 @@
 
 		function tick() {
 			// update character position
-			character.y += character.vy;
-			character.x += character.vx;
+			// character.y += character.vy;
+			// character.x += character.vx;
+			db.ref('players/me').update({
+				x: character.x + character.vx,
+				y: character.y + character.vy
+			});
 
 			// check for intersection between character and food
 			food.forEach(function(f) {
@@ -96,6 +114,11 @@
 			else if (e.keyCode == "37") {	character.vx = 0;	} // left
 			else if (e.keyCode == "39") {	character.vx = 0;	} // right
 		}
+
+		db.ref('/').on('value', function(snapshot) {
+			character.x = parseInt(snapshot.val().players.me.x);
+			character.y = parseInt(snapshot.val().players.me.y);
+		});
 		</script>
 	</head>
 
