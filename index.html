@@ -1,7 +1,13 @@
 <html>
 	<head>
+		<title>BubbleBase -- a Firebase demo game</title>
 		<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
 		<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+		<style>
+		html, body {
+			overflow: hidden;
+		}
+		</style>
 		<script>
 		function init() {
 			circle = new createjs.Shape();
@@ -49,35 +55,18 @@
 		document.onkeydown = function (e) {
 			e = e || window.event;
 
-			if (e.keyCode == "38") {
-				// up
-				circle.vy = -10;
-			} else if (e.keyCode == "40") {
-				// down
-				circle.vy = 10;
-			} else if (e.keyCode == "37") {
-				// left
-				circle.vx = -10;
-			} else if (e.keyCode == "39") {
-				// right
-				circle.vx = 10;
-			}
+			if (e.keyCode == "38") { 		circle.vy = -10;	} // up
+			else if (e.keyCode == "40") {	circle.vy = 10;		} //down
+			else if (e.keyCode == "37") {	circle.vx = -10;	} // left
+			else if (e.keyCode == "39") {	circle.vx = 10;		} // right
 		}
 		document.onkeyup = function (e) {
 			e = e || window.event;
 
-			if (e.keyCode == "38") {
-				// up
-				circle.vy = 0;
-			} else if (e.keyCode == "40") {
-				// down
-				circle.vy = 0;
-			} else if (e.keyCode == "37") {
-				// left
-				circle.vx = 0;
-			} else if (e.keyCode == "39") {
-				// right
-				circle.vx = 0;
+			if (e.keyCode == "38") {		circle.vy = 0;	} // up
+			else if (e.keyCode == "40") {	circle.vy = 0;	} // down
+			else if (e.keyCode == "37") {	circle.vx = 0;	} // left
+			else if (e.keyCode == "39") {	circle.vx = 0;	} // right
 			}
 		}
 		</script>
