@@ -5,16 +5,27 @@
 		<script>
 		function init() {
 			circle = new createjs.Shape();
+			food = new createjs.Shape();
 			stage = new createjs.Stage("gameCanvas");
 			stage.canvas.width = window.innerWidth;
 			stage.canvas.height = window.innerHeight;
-			
+
 			circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 50);
 			circle.x = 100;
 			circle.y = 100;
 			circle.vx = 0;
 			circle.vy = 0;
+			circle.radius = 50;
 			stage.addChild(circle);
+			
+
+			food.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 10);
+			food.x = 900;
+			food.y = 100;
+			food.vx = 0;
+			food.vy = 0;
+			food.radius = 10;
+			stage.addChild(food);
 			
 			createjs.Ticker.setFPS(60);
 			createjs.Ticker.addEventListener("tick", tick);
@@ -24,6 +35,14 @@
 			// update circle
 			circle.y += circle.vy;
 			circle.x += circle.vx;
+
+			var a = circle.x - food.x;
+			var b = circle.y - food.y;
+			var c = Math.sqrt(a*a + b*b);
+			if (c <= circle.radius + food.radius) {
+				console.log("intersect!!!");
+			}
+
 			stage.update();
 		}
 
