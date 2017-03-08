@@ -72,7 +72,7 @@
 					console.log(food[f].x + ', ' + food[f].y);
 					if (c <= character.radius + food[f].radius) {
 						console.log('eat');
-						updateCircleRadius(character, character.radius+5);
+						updateCircleRadius(character, character.radius+1);
 						db.ref('food/' + f + '').update({
 							visible: false,
 							x: Math.random()*1024,
