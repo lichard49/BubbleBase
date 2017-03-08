@@ -46,7 +46,7 @@
             
             playersName = prompt("Please enter your name", "")
 
-			character = createCircleColor(100, 100, 20, color);
+			character = createCircleColor(100, 100, 32, color);
             characterText = createText(200,200,playersName);
 			stage.addChild(character);
             stage.addChild(characterText);
@@ -109,7 +109,8 @@
         {
             var newFood = new createjs.Shape();
             var m = new createjs.Matrix2D().translate(-18,-21);
-            newFood.graphics.beginBitmapFill(image, "no-repeat", m).setStrokeStyle(1).beginStroke("rgba(150,150,150,1)").drawCircle(0, 0, radius);
+	    //newFood.graphics.beginBitmapFill(image, "no-repeat", m).setStrokeStyle(1).beginStroke("rgba(150,150,150,1)").drawCircle(0, 0, radius);
+            newFood.graphics.beginBitmapFill(image, "no-repeat", m).drawCircle(0, 0, radius);
             newFood.x = x;
             newFood.y = y;
             newFood.vx = 0;
