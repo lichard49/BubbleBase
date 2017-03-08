@@ -25,14 +25,23 @@
 		db = firebase.database();
 		food = [];
 		foodTimer = 0;
+        var playersName;
+        var characterText;
+        
+        var characterList = new Array();
+        var characterTextList = new Array();
 
 		function init() {
 			stage = new createjs.Stage("gameCanvas");
 			stage.canvas.width = window.innerWidth;
 			stage.canvas.height = window.innerHeight;
+            
+            playersName = prompt("Please enter your name", "Harry Potter")
 
 			character = createCircle(100, 100, 20);
+            characterText = createText(200,200,playersName);
 			stage.addChild(character);
+            stage.addChild(characterText);
 			
 			createjs.Ticker.setFPS(30);
 			createjs.Ticker.addEventListener("tick", tick);
@@ -42,9 +51,10 @@
 			// update character position
 			// character.y += character.vy;
 			// character.x += character.vx;
-			db.ref('players/me').update({
+			db.ref('players/' + playersName).update({
 				x: character.x + character.vx,
-				y: character.y + character.vy
+				y: character.y + character.vy,
+                rad: character.radius
 			});
 
 			// check for intersection between character and food
@@ -74,6 +84,16 @@
 			stage.update();
 		}
 
+        function createText(x, y, _text) {
+            var text = new createjs.Text(_text, "14px Arial", "#ff7700");
+            text.x=x;
+            text.y=y;
+            text.vx=0;
+            text.vy=0;
+            text.textBaseline = "alphabetic";
+            return text;
+        }
+        
 		function createCircle(x, y, radius) {
 			var newCircle = new createjs.Shape();
 			newCircle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, radius);
@@ -97,6 +117,11 @@
 			circle.y = -1000;
 			circle.radius = 0;
 		}
+        
+        function deleteShape(shape) {
+            //shape.graphics.clear();
+            stage.removeChild(shape);
+        }
 
 		document.onkeydown = function (e) {
 			e = e || window.event;
@@ -115,10 +140,41 @@
 			else if (e.keyCode == "39") {	character.vx = 0;	} // right
 		}
 
-		db.ref('/').on('value', function(snapshot) {
-			character.x = parseInt(snapshot.val().players.me.x);
-			character.y = parseInt(snapshot.val().players.me.y);
+		db.ref('/players').on('value', function(snapshot) {
+			character.x = parseInt(snapshot.val()[playersName].x);
+			character.y = parseInt(snapshot.val()[playersName].y);
+            characterText.x = parseInt(snapshot.val()[playersName].x);
+            characterText.y = parseInt(snapshot.val()[playersName].y);
+                              
+            for (var i = 0; i < characterList.length; i ++ ){
+                    deleteShape(characterList[i]);
+                    deleteShape(characterTextList[i]);
+            }
+                              
+            var size = Object.size(snapshot.val());
+            for (key in snapshot.val()) {
+                    if (snapshot.val().hasOwnProperty(key) && key!=playersName && key!='me') {
+                              console.log(snapshot.val()[key].x);
+                              var circle = createCircle(snapshot.val()[key].x,snapshot.val()[key].y,snapshot.val()[key].rad);
+                              var text = createText(snapshot.val()[key].x,snapshot.val()[key].y,key);
+                              console.log(key);
+                              characterList.push(circle);
+                              characterTextList.push(text);
+                              stage.addChild(circle);
+                              stage.addChild(text);
+                    }
+            }
+                              
 		});
+        
+        Object.size = function(obj) {
+            var size = 0, key;
+            for (key in obj) {
+                if (obj.hasOwnProperty(key)) size++;
+            }
+            return size;
+        };
+        
 		</script>
 	</head>
 
