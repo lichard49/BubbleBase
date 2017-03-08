@@ -34,7 +34,9 @@
         var characterList = new Array();
         var characterTextList = new Array();
 
-        foodPhoto = "";
+        var url = "https://firebasestorage.googleapis.com/v0/b/bubblebase-f8da5.appspot.com/o/alex.png?alt=media&token=1346f879-59d1-45cc-bf26-763119e3b05a";
+        var image = new Image();
+        image.src = url;
 
 
 		function init() {
@@ -42,7 +44,7 @@
 			//stage.canvas.width = 1024;
 			//stage.canvas.height = 768;
             
-            playersName = prompt("Please enter your name", "Harry Potter")
+            playersName = prompt("Please enter your name", "")
 
 			character = createCircleColor(100, 100, 20, color);
             characterText = createText(200,200,playersName);
@@ -69,7 +71,6 @@
 					var a = character.x - food[f].x;
 					var b = character.y - food[f].y;
 					var c = Math.sqrt(a*a + b*b);
-					console.log(food[f].x + ', ' + food[f].y);
 					if (c <= character.radius + food[f].radius) {
 						console.log('eat');
 						updateCircleRadius(character, character.radius+1);
@@ -103,6 +104,21 @@
             text.textBaseline = "alphabetic";
             return text;
         }
+      
+        function createFood(x,y,radius)
+        {
+            var newFood = new createjs.Shape();
+            var m = new createjs.Matrix2D().translate(-18,-21);
+            newFood.graphics.beginBitmapFill(image, "no-repeat", m).setStrokeStyle(1).beginStroke("rgba(150,150,150,1)").drawCircle(0, 0, radius);
+            newFood.x = x;
+            newFood.y = y;
+            newFood.vx = 0;
+            newFood.vy = 0;
+            newFood.radius = radius;
+            return newFood;
+        }
+
+
         
 		function createCircleColor(x, y, radius, color) {
 			var newCircle = new createjs.Shape();
@@ -196,7 +212,8 @@
 		db.ref('food').on('value', function(snapshot) {
 			if (!foodPopulated) {
 				for (var f in snapshot.val()) {
-					food[f] = createCircle(snapshot.val()[f]['x'], snapshot.val()[f]['y'], 10);
+                    food[f] = createFood(snapshot.val()[f]['x'], snapshot.val()[f]['y'], 22);
+//					food[f] = createCircle(snapshot.val()[f]['x'], snapshot.val()[f]['y'], 10);
 					stage.addChild(food[f]);
 					if (!snapshot.val()[f]['visible']) {
 						deleteCircle(food[f]);
