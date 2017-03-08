@@ -34,9 +34,6 @@
 
 			character = createCircle(100, 100, 20);
 			stage.addChild(character);
-			
-			console.log('hi');
-			console.log(food);
 
 			createjs.Ticker.setFPS(30);
 			createjs.Ticker.addEventListener("tick", tick);
@@ -51,16 +48,27 @@
 
 			// check for intersection between character and food
 			for (var f in food) {
-				console.log(food[f].visible);
 				if (food[f].visible) {
 					var a = character.x - food[f].x;
 					var b = character.y - food[f].y;
 					var c = Math.sqrt(a*a + b*b);
-					console.log(c);
+					console.log(food[f].x + ', ' + food[f].y);
 					if (c <= character.radius + food[f].radius) {
+						console.log('eat');
 						updateCircleRadius(character, character.radius+10);
 						db.ref('food/' + f + '').update({
-							visible: false
+							visible: false,
+							x: Math.random()*1800,
+							y: Math.random()*800
+						});
+						deleteCircle(food[f]);
+					}
+				} else {
+					food[f].time--;
+					console.log('time left ' + food[f].time);
+					if (food[f].time <= 0) {
+						db.ref('food/' + f + '').update({
+							visible: true
 						});
 					}
 				}
@@ -106,10 +114,11 @@
 		}
 
 		function deleteCircle(circle) {
-			circle.graphics.clear();
-			circle.x = -1000;
-			circle.y = -1000;
-			circle.radius = 0;
+			// circle.graphics.clear();
+			circle.x = NaN;
+			circle.y = NaN;
+			circle.visible = false;
+			// circle.radius = 0;
 		}
 
 		document.onkeydown = function (e) {
@@ -140,6 +149,9 @@
 					stage.addChild(food[f]);
 					if (!snapshot.val()[f]['visible']) {
 						deleteCircle(food[f]);
+						food[f].time = snapshot.val()[f]['timeTillNextSpawn'];
+					} else {
+						food[f].visible = true;
 					}
 				}
 				foodPopulated = true;
@@ -148,6 +160,7 @@
 					if (snapshot.val()[f]['visible']) {
 						food[f].x = snapshot.val()[f]['x'];
 						food[f].y = snapshot.val()[f]['y'];
+						food[f].visible = true;
 					} else {
 						deleteCircle(food[f]);
 					}
