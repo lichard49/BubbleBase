@@ -35,7 +35,9 @@
 		<script>
 		db = firebase.database();
 		food = {};
+        teleportFood = {};
 		foodPopulated = false;
+        teleportfoodPopulated = false;
 		foodTimer = 0;
         var color = getRandomColor();
 
@@ -46,8 +48,11 @@
         var characterTextList = new Array();
 
         var url = "https://firebasestorage.googleapis.com/v0/b/bubblebase-f8da5.appspot.com/o/alex.png?alt=media&token=1346f879-59d1-45cc-bf26-763119e3b05a";
+        var teleurl = "https://firebasestorage.googleapis.com/v0/b/bubblebase-f8da5.appspot.com/o/mattia.png?alt=media&token=73e89895-e6c8-4d76-a470-4ec1a72ee8c7";
         var image = new Image();
+        var teleportImage = new Image();
         image.src = url;
+        teleportImage.src = teleurl;
 
 
 		function init() {
@@ -145,12 +150,12 @@
             return text;
         }
       
-        function createFood(x,y,radius)
+        function createFood(x,y,radius,foodimage)
         {
             var newFood = new createjs.Shape();
             var m = new createjs.Matrix2D().translate(-18,-21);
-	    //newFood.graphics.beginBitmapFill(image, "no-repeat", m).setStrokeStyle(1).beginStroke("rgba(150,150,150,1)").drawCircle(0, 0, radius);
-            newFood.graphics.beginBitmapFill(image, "no-repeat", m).drawCircle(0, 0, radius);
+//            newFood.graphics.beginBitmapFill(image, "no-repeat", m).setStrokeStyle(1).beginStroke("rgba(150,150,150,1)").drawCircle(0, 0, radius);
+            newFood.graphics.beginBitmapFill(foodimage, "no-repeat", m).drawCircle(0, 0, radius);
             newFood.x = x;
             newFood.y = y;
             newFood.vx = 0;
@@ -255,7 +260,8 @@
 		db.ref('food').on('value', function(snapshot) {
 			if (!foodPopulated) {
 				for (var f in snapshot.val()) {
-                    food[f] = createFood(snapshot.val()[f]['x'], snapshot.val()[f]['y'], 22);
+                    food[f] = createFood(snapshot.val()[f]['x'], snapshot.val()[f]['y'], 22,image);
+                    
 //					food[f] = createCircle(snapshot.val()[f]['x'], snapshot.val()[f]['y'], 10);
 					stage.addChild(food[f]);
 					if (!snapshot.val()[f]['visible']) {
@@ -279,6 +285,35 @@
 				}
 			}
         });
+            
+//        db.ref('teleportfood').on('value', function(snapshot) {
+//			if (!teleportfoodPopulated) {
+//				for (var f in snapshot.val()) {
+//                    teleportFood[f] = createFood(snapshot.val()[f]['x'], snapshot.val()[f]['y'], 22,teleportImage);
+//                    
+////					food[f] = createCircle(snapshot.val()[f]['x'], snapshot.val()[f]['y'], 10);
+//					stage.addChild(teleportFood[f]);
+//					if (!snapshot.val()[f]['visible']) {
+//						deleteCircle(teleportFood[f]);
+//						teleportFood[f].time = snapshot.val()[f]['timeTillNextSpawn'];
+//					} else {
+//						teleportFood[f].visible = true;
+//					}
+//				}
+//				teleportfoodPopulated = true;
+//			} else {
+//				for (var f in snapshot.val()) {
+//					if (snapshot.val()[f]['visible']) {
+//						teleportFood[f].x = snapshot.val()[f]['x'];
+//						teleportFood[f].y = snapshot.val()[f]['y'];
+//						teleportFood[f].visible = true;
+//					} else {
+//						deleteCircle(teleportFood[f]);
+//						teleportFood[f].time = snapshot.val()[f]['timeTillNextSpawn'];
+//					}
+//				}
+//			}
+//        });
         
         function getRandomColor() {
             var letters = '0123456789ABCDEF';
