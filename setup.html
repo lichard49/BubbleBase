@@ -1,0 +1,41 @@
+<html>
+	<head>
+		<title>BubbleBase -- a Firebase demo game</title>
+		<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+		<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/3.7.0/firebase.js"></script>
+		<script>
+			// Initialize Firebase
+			var config = {
+				apiKey: "AIzaSyBqCKqeT2f73mTsJZoKZ2EORRLWcUSG8dI",
+				authDomain: "bubblebase-f8da5.firebaseapp.com",
+				databaseURL: "https://bubblebase-f8da5.firebaseio.com",
+				storageBucket: "bubblebase-f8da5.appspot.com",
+				messagingSenderId: "654534084811"
+			};
+			firebase.initializeApp(config);
+			db = firebase.database();
+
+			function init() {
+
+				food = {};
+				for (var i = 0; i < 20; i++) {
+					food[i] = {
+						x: Math.random()*1800,
+						y: Math.random()*800,
+						timeTillNextSpawn: Math.random()*30,
+						visible: false
+					}
+				}
+				food[0]['visible'] = true;
+
+				db.ref('food').set(food);
+			}
+		</script>
+
+	</head>
+
+	<body onload="init();">
+
+	</body>
+</html>

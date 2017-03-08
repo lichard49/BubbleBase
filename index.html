@@ -23,13 +23,18 @@
 		</style>
 		<script>
 		db = firebase.database();
-		food = [];
+		food = {};
+		foodPopulated = false;
 		foodTimer = 0;
+
         var playersName;
         var characterText;
         
         var characterList = new Array();
         var characterTextList = new Array();
+
+        foodPhoto = "";
+
 
 		function init() {
 			stage = new createjs.Stage("gameCanvas");
@@ -42,7 +47,6 @@
             characterText = createText(200,200,playersName);
 			stage.addChild(character);
             stage.addChild(characterText);
-			
 			createjs.Ticker.setFPS(30);
 			createjs.Ticker.addEventListener("tick", tick);
 		}
@@ -58,28 +62,32 @@
 			});
 
 			// check for intersection between character and food
-			food.forEach(function(f) {
-				var a = character.x - f.x;
-				var b = character.y - f.y;
-				var c = Math.sqrt(a*a + b*b);
-				if (c <= character.radius + f.radius) {
-					updateCircleRadius(character, character.radius+10);
-					deleteCircle(f);
-					console.log("Eat");
+			for (var f in food) {
+				if (food[f].visible) {
+					var a = character.x - food[f].x;
+					var b = character.y - food[f].y;
+					var c = Math.sqrt(a*a + b*b);
+					console.log(food[f].x + ', ' + food[f].y);
+					if (c <= character.radius + food[f].radius) {
+						console.log('eat');
+						updateCircleRadius(character, character.radius+5);
+						db.ref('food/' + f + '').update({
+							visible: false,
+							x: Math.random()*1800,
+							y: Math.random()*800
+						});
+						deleteCircle(food[f]);
+					}
+				} else {
+					food[f].time--;
+					console.log('time left ' + food[f].time);
+					if (food[f].time <= 0) {
+						db.ref('food/' + f + '').update({
+							visible: true
+						});
+					}
 				}
-			})
-
-			// generate new food
-			if (foodTimer <= 0) {
-				var newFood = createCircle(Math.random()*window.innerWidth, Math.random()*window.innerHeight, 10);
-				stage.addChild(newFood);
-				food.push(newFood);
-
-				// reset food timer
-				foodTimer = Math.random()*200 + Math.random()*100;
-				console.log("next food to appear in " + foodTimer);
 			}
-			foodTimer--;
 
 			stage.update();
 		}
@@ -112,10 +120,9 @@
 		}
 
 		function deleteCircle(circle) {
-			circle.graphics.clear();
-			circle.x = -1000;
-			circle.y = -1000;
-			circle.radius = 0;
+			circle.x = NaN;
+			circle.y = NaN;
+			circle.visible = false;
 		}
         
         function deleteShape(shape) {
@@ -175,6 +182,32 @@
             return size;
         };
         
+		db.ref('food').on('value', function(snapshot) {
+			if (!foodPopulated) {
+				for (var f in snapshot.val()) {
+					food[f] = createCircle(snapshot.val()[f]['x'], snapshot.val()[f]['y'], 10);
+					stage.addChild(food[f]);
+					if (!snapshot.val()[f]['visible']) {
+						deleteCircle(food[f]);
+						food[f].time = snapshot.val()[f]['timeTillNextSpawn'];
+					} else {
+						food[f].visible = true;
+					}
+				}
+				foodPopulated = true;
+			} else {
+				for (var f in snapshot.val()) {
+					if (snapshot.val()[f]['visible']) {
+						food[f].x = snapshot.val()[f]['x'];
+						food[f].y = snapshot.val()[f]['y'];
+						food[f].visible = true;
+					} else {
+						deleteCircle(food[f]);
+					}
+				}
+			}
+        });
+
 		</script>
 	</head>
 
