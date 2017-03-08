@@ -19,7 +19,18 @@
 		<style>
 		html, body {
 			overflow: hidden;
+			background-color: lightblue;
 		}
+		#gameCanvas {
+			background-color: white;
+		}
+		#content {
+			width: 1024;
+			height: 720;
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+		}			
 		</style>
 		<script>
 		db = firebase.database();
@@ -251,6 +262,11 @@
 	</head>
 
 	<body onload="init();">
-		<canvas id="gameCanvas" width="1024" height="720"></canvas>
+		<div id="content">
+			<h1>BubbleBase -- a Firebase demo game</h1>
+			<canvas id="gameCanvas" width="1024" height="720">
+			</canvas>
+			<p>Play by moving your arrow keys, and try to eat as many bubbles as possible!</p>
+		</div>
 	</body>
 </html>
