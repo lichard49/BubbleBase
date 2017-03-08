@@ -26,6 +26,7 @@
 		food = {};
 		foodPopulated = false;
 		foodTimer = 0;
+        var color = getRandomColor();
 
         var playersName;
         var characterText;
@@ -38,12 +39,12 @@
 
 		function init() {
 			stage = new createjs.Stage("gameCanvas");
-			stage.canvas.width = 1024;
-			stage.canvas.height = 768;
+			//stage.canvas.width = 1024;
+			//stage.canvas.height = 768;
             
             playersName = prompt("Please enter your name", "Harry Potter")
 
-			character = createCircle(100, 100, 20);
+			character = createCircleColor(100, 100, 20, color);
             characterText = createText(200,200,playersName);
 			stage.addChild(character);
             stage.addChild(characterText);
@@ -58,7 +59,8 @@
 			db.ref('players/' + playersName).update({
 				x: character.x + character.vx,
 				y: character.y + character.vy,
-                rad: character.radius
+                rad: character.radius,
+                color: color
 			});
 
 			// check for intersection between character and food
@@ -102,9 +104,9 @@
             return text;
         }
         
-		function createCircle(x, y, radius) {
+		function createCircleColor(x, y, radius, color) {
 			var newCircle = new createjs.Shape();
-			newCircle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, radius);
+			newCircle.graphics.beginFill(color).drawCircle(0, 0, radius);
 			newCircle.x = x;
 			newCircle.y = y;
 			newCircle.vx = 0;
@@ -113,9 +115,20 @@
 			return newCircle;
 		}
 
+        function createCircle(x, y, radius) {
+            var newCircle = new createjs.Shape();
+            newCircle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, radius);
+            newCircle.x = x;
+            newCircle.y = y;
+            newCircle.vx = 0;
+            newCircle.vy = 0;
+            newCircle.radius = radius;
+            return newCircle;
+        }
+        
 		function updateCircleRadius(circle, radius) {
-			circle.graphics.clear();
-			circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, radius);
+			//circle.graphics.clear();
+			circle.graphics.drawCircle(0, 0, radius);
 			circle.radius = radius;
 		}
 
@@ -162,7 +175,7 @@
             for (key in snapshot.val()) {
                     if (snapshot.val().hasOwnProperty(key) && key!=playersName && key!='me') {
                               console.log(snapshot.val()[key].x);
-                              var circle = createCircle(snapshot.val()[key].x,snapshot.val()[key].y,snapshot.val()[key].rad);
+                              var circle = createCircleColor(snapshot.val()[key].x,snapshot.val()[key].y,snapshot.val()[key].rad,snapshot.val()[key].color);
                               var text = createText(snapshot.val()[key].x,snapshot.val()[key].y,key);
                               console.log(key);
                               characterList.push(circle);
@@ -207,11 +220,20 @@
 				}
 			}
         });
+        
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++ ) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
 
 		</script>
 	</head>
 
 	<body onload="init();">
-		<canvas id="gameCanvas" width="500" height="300"></canvas>
+		<canvas id="gameCanvas" width="1024" height="720"></canvas>
 	</body>
 </html>
