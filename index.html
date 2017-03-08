@@ -75,25 +75,6 @@
 				}
 			}
 
-
-
-			// generate new food
-			/*
-			if (foodTimer <= 0) {
-				var newFood = createCircle(Math.random()*window.innerWidth, Math.random()*window.innerHeight, 10);
-				stage.addChild(newFood);
-				db.ref('food/' + numFood).update({
-					x: newFood.x,
-					y: newFood.y
-				});
-
-				// reset food timer
-				foodTimer = Math.random()*200 + Math.random()*100;
-				console.log("next food to appear in " + foodTimer);
-			}
-			foodTimer--;
-			*/
-
 			stage.update();
 		}
 
@@ -115,11 +96,9 @@
 		}
 
 		function deleteCircle(circle) {
-			// circle.graphics.clear();
 			circle.x = NaN;
 			circle.y = NaN;
 			circle.visible = false;
-			// circle.radius = 0;
 		}
 
 		document.onkeydown = function (e) {
