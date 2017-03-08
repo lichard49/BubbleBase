@@ -82,7 +82,8 @@
 					var a = character.x - food[f].x;
 					var b = character.y - food[f].y;
 					var c = Math.sqrt(a*a + b*b);
-					if (c <= character.radius + food[f].radius) {
+					if (isColliding(character.x, character.y, character.radius,
+                            food[f].x, food[f].y, food[f].radius)) {
 						console.log('eat');
 						updateCircleRadius(character, character.radius+1);
 						db.ref('food/' + f + '').update({
@@ -94,7 +95,7 @@
 					}
 				} else {
 					food[f].time--;
-					console.log('time left ' + food[f].time);
+					// console.log('time left ' + food[f].time);
 					if (food[f].time <= 0) {
 						db.ref('food/' + f + '').update({
 							visible: true
@@ -103,8 +104,36 @@
 				}
 			}
 
+            // check for intersection between character and character
+            /*
+            for (var c in characterList) {
+                if (isColliding(character.x, character.y, character.radius,
+                        characterList[c].x, characterList[c].y, characterList[c].radius)) {
+                    if (character.radius > characterList[c].radius) {
+                        console.log("i killed ");
+                        console.log(characterList[c].name);
+                    } else if(character.radius < characterList[c].radius) {
+                        console.log("i lose");
+                        db.ref('players/' + playersName).update({
+                            x: Math.random()*1024,
+                            y: Math.random()*720,
+                            rad: 32,
+                            color: color
+                        });
+                    }
+                }
+            }
+            */
+
 			stage.update();
 		}
+
+        function isColliding(x0, y0, r0, x1, y1, r1) {
+            var a = x0 - x1;
+            var b = y0 - y1;
+            var c = Math.sqrt(a*a + b*b);
+            return c <= r0 + r1;
+        }
 
         function createText(x, y, _text) {
             var text = new createjs.Text(_text, "14px Arial", "#ff7700");
@@ -191,6 +220,7 @@
 		db.ref('/players').on('value', function(snapshot) {
 			character.x = parseInt(snapshot.val()[playersName].x);
 			character.y = parseInt(snapshot.val()[playersName].y);
+            character.rad = parseInt(snapshot.val()[playersName].rad);
             characterText.x = parseInt(snapshot.val()[playersName].x);
             characterText.y = parseInt(snapshot.val()[playersName].y);
                               
@@ -203,6 +233,7 @@
             for (key in snapshot.val()) {
                     if (snapshot.val().hasOwnProperty(key) && key!=playersName && key!='me') {
                               var circle = createCircleColor(snapshot.val()[key].x,snapshot.val()[key].y,snapshot.val()[key].rad,snapshot.val()[key].color);
+                              circle.name = key;
                               var text = createText(snapshot.val()[key].x,snapshot.val()[key].y,key);
                               characterList.push(circle);
                               characterTextList.push(text);
